@@ -1,0 +1,15 @@
+Phase 1 11/02
+Description
+This project currently simulates an operating system. The program asks for the user to enter a program to run and the number of processes
+it should jave. The OS will parse the program file to generate the user-defined number of processes. OS will then allocate the all processes  
+to the new queue and then to the ready queue. From there, processeses will be evaluated by the scheduler, through the round robin scheduling algorithm, and sent
+back and forth between the waiting and ready queues depending on instruction type: calculate or I/O. Instructions will run for a randomized amount of cycles.
+
+How to Run: 
+From the jar file or being compiled and executed manually through the command line.
+*choose program Calculator as there are a few bugs with critical sections.
+
+Issues:
+1. critical section resoulution not implemented fully
+2. round robin scheduler has some issues when preempting some processes and 
+3. UI's visuals could be improved
