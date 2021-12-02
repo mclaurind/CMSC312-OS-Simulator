@@ -1,14 +1,20 @@
-I/O
-I/O
-I/O
-CALCULATE
-I/O
-I/O
-I/O
-CALCULATE
-CRIT_START
-I/O
-I/O
-I/O
-CALCULATE
-CRIT_END
+150 MB
+I/O     		5		100
+I/O 			10		20
+I/O     		5		100
+CRIT_START      0       0
+I/O 			15		25
+I/O     		5		100
+I/O 			10		20
+FORK            0       0
+I/O     		5		100
+I/O 			15		25
+CRIT_END        0       0
+CALCULATE		5		100
+I/O     		5		100
+I/O 			10		20
+CALCULATE 		5		20
+I/O     		5		100
+CALCULATE 		25		50
+I/O 			10		20
+CALCULATE 		5		20

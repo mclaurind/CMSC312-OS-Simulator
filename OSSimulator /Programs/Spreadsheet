@@ -1,11 +1,13 @@
+50 MB
 I/O 			10		20
+FORK            0       0
 I/O 			15		20
 CALCULATE 		5		20
 I/O 			15		25
-CRIT_START
 CALCULATE		5		100
+CRIT_START      0       0
 CALCULATE 		25		50
-CRIT_END
 CALCULATE		5		100
+CRIT_END        0       0
 CALCULATE 		5		20
 I/O 			15		25

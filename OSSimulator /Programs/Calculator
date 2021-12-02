@@ -1,5 +1,10 @@
-CALCULATE		5		100
+250 MB
+CALCULATE       5		100
 CALCULATE 		25		50
 I/O 			10		20
+FORK            0      	0
+CRIT_START     	0       0
 CALCULATE 		5		20
+CRIT_END        0       0
 I/O 			15		25
+CALCULATE 		5		20
