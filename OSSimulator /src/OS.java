@@ -6,7 +6,9 @@ import java.util.*;
 public class OS {
     static ArrayDeque<pcb> newQueue; //all processes in system
     static int mainMemorySize = 1024; //OS simulator will have a main memory size of 1024 MB
-    static int usedMemory = 0; //tracks memory of system and processes
+    static int remMemory = 0; //remaining memory
+    static int processTotal;
+    static Scheduler [] threads = new Scheduler[4]; //4 threads
 
     public static void main(String [] args) throws InterruptedException {
         Scanner in = new Scanner(System.in);
@@ -19,7 +21,7 @@ public class OS {
         //user chooses a program and its number of processes
         String program = in.nextLine();
         System.out.println("Enter the number of processes for this program:\n");
-        int processTotal = in.nextInt();
+        processTotal = in.nextInt();
         System.out.println("\n\n\t\tPROCESSES\n**************************");
 
 
@@ -32,19 +34,24 @@ public class OS {
             System.out.print(" PROCESS " + process.PID);
             System.out.print(process.toString()+"\n");
             System.out.print("\n");
-            usedMemory = mainMemorySize - process.memorySize; //tracking memory size
+            remMemory = mainMemorySize - process.memorySize; //tracking memory size
         }
 
-        //Round Robin Scheduler
         System.out.print("\nROUND ROBIN SCHEDULER ACTIVITY LOG\n*********************************\n");
-        cpu cpu1 = new cpu(); //for round robin scheduler
-        cpu1.scheduler.roundRobinScheduler(newQueue, processTotal,mainMemorySize);
+        /*for (int i = 0; i < 4; i++){
+            threads[i] = new Scheduler();
+            threads[i].setName(Integer.toString(i));
+            threads[i].start();
+            System.out.print("THREAD THREAD THREAD THREAD THREAD" + threads[i].getName() + "\n");
+        }*/
 
+        Scheduler rr = new Scheduler();
+        rr.roundRobinScheduler(newQueue,processTotal,remMemory);
 
         //simulates cascading termination
-        System.out.print("\n Displaying terminated child processes...\n\n");
+        System.out.print("\nDisplaying terminated child processes...\n\n");
         for (pcb p : Scheduler.childProcesses){
-            System.out.print(" CHILD PROCESS " + p.childPID + "\n PID: " + p.childPID + p.toString().replace("PID: ", "PPID: ") + "\n\n");
+            System.out.print("CHILD PROCESS " + p.childPID + "\n PID: " + p.childPID + p.toString().replace("PID: ", "PPID: ") + "\n\n");
         }
     }
 

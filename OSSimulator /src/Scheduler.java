@@ -1,19 +1,19 @@
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 
-public class Scheduler {
+public class Scheduler extends Thread{
     static ArrayDeque<pcb> readyQueue;
     static ArrayList<pcb> waitQueue;
     static ArrayList<pcb> terminatedProcesses;
     static ArrayDeque<pcb> childProcesses;
     static int cycles = 0; //tracks elapsed cycles of simulator
-    static int quantum = 5; //round robin scheduler time quantum
+    static int quantum = 4; //round robin scheduler time quantum
     static boolean simulating = true;
     static pcb simP; // the current simulating process
     static CSHandler cs; // handles critical section in each process
 
     //Round Robin scheduling algorithm
-    public void roundRobinScheduler(ArrayDeque<pcb> newQueue, int processTotal, int remMemory) throws InterruptedException {
+    public synchronized void roundRobinScheduler(ArrayDeque<pcb> newQueue, int processTotal, int remMemory) throws InterruptedException {
         readyQueue = new ArrayDeque<>();
         waitQueue = new ArrayList<>();
         terminatedProcesses = new ArrayList<>();
@@ -225,4 +225,17 @@ public class Scheduler {
         sb.append(activity);
         System.out.print(sb);
     }
+
+    /*@Override
+    public void run(){
+        int threadNum = Integer.parseInt(Thread.currentThread().getName());
+        for (int i = 0; i < simProcess.length; i++){
+            simProcess[i] = null;
+        }
+        try {
+            roundRobinScheduler(simProcess[threadNum]);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }*/
 }
