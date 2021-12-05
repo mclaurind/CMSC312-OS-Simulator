@@ -1,3 +1,4 @@
+//new scheduler
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 
@@ -5,22 +6,27 @@ public class Scheduler extends Thread{
     static ArrayDeque<pcb> readyQueue;
     static ArrayList<pcb> waitQueue;
     static ArrayList<pcb> terminatedProcesses;
-    static ArrayDeque<pcb> childProcesses;
+    static ArrayList<pcb> childProcesses;
     static int cycles = 0; //tracks elapsed cycles of simulator
-    static int quantum = 4; //round robin scheduler time quantum
+    static int quantum = 5; //round robin scheduler time quantum
     static boolean simulating = true;
-    static pcb simP; // the current simulating process
+    //static pcb simP; // the current simulating process
     static CSHandler cs; // handles critical section in each process
+    static pcb [] simProcess =  new pcb [4];
+    static ArrayDeque<pcb> newQueue;
+    static int remMemory = 0;
 
     //Round Robin scheduling algorithm
-    public synchronized void roundRobinScheduler(ArrayDeque<pcb> newQueue, int processTotal, int remMemory) throws InterruptedException {
+    public synchronized void roundRobinScheduler(pcb simProcess) throws InterruptedException {
         readyQueue = new ArrayDeque<>();
         waitQueue = new ArrayList<>();
         terminatedProcesses = new ArrayList<>();
-        childProcesses = new ArrayDeque<>();
-        simP = null;
+        this.childProcesses = new ArrayList<>();
         cs = new CSHandler();
         IODevice ioDevice = new IODevice();
+        this.newQueue = OS.newQueue;
+        this.remMemory = OS.remMemory;
+        pcb simP = simProcess;
 
         while (simulating) {
             cycles += 1;
@@ -31,7 +37,7 @@ public class Scheduler extends Thread{
                     if (process.arrivalTime <= cycles ) {
                         //if there's enough memory for process, then it'll move to ready queue
                         if (remMemory > process.memorySize) {
-                            remMemory = remMemory - process.memorySize; //updating main memory size
+                            //remMemory = remMemory - process.memorySize; //updating main memory size
                             process.state = ProcessState.READY;
                             readyQueue.add(process);
                             newQueue.remove(process);
@@ -85,11 +91,11 @@ public class Scheduler extends Thread{
                             if(ioDevice.shouldInterrupt()){
                                 log(ioDevice.name + " INTERRUPT\n");
                                 simP.state =  ProcessState.WAIT;
-                                waitQueue.add(simP);
+                                //waitQueue.add(simP);
                                 log("Process " + simP.PID + " added to wait queue due to interrupt \n");
                                 int suspendProcess = ioDevice.cycle;
-                                Thread.sleep(suspendProcess);
-                                waitQueue.remove(simP);
+                                //Thread.sleep(suspendProcess);
+                                //waitQueue.remove(simP);
                                 log("\n" + ioDevice.name + " interrupt"+ " handled\n");
                             }
                             else {
@@ -99,18 +105,18 @@ public class Scheduler extends Thread{
                                 }
                                 log("Process " + simP.PID + " is running (CALCULATE)\n");
                             }
-                            break;
+                            //continue;
 
-                        //I/O - process will enter waiting state for a number of cycles
+                            //I/O - process will enter waiting state for a number of cycles
                         case "I/O":
                             if(ioDevice.shouldInterrupt()){
                                 log(ioDevice.name + " INTERRUPT\n");
                                 simP.state =  ProcessState.WAIT;
-                                waitQueue.add(simP);
+                                //waitQueue.add(simP);
                                 log("Process " + simP.PID + " added to wait queue due to interrupt \n");
                                 int suspendProcess = ioDevice.cycle;
-                                Thread.sleep(suspendProcess);
-                                waitQueue.remove(simP);
+                                //Thread.sleep(suspendProcess);
+                                //waitQueue.remove(simP);
                                 log("\n" + ioDevice.name + " interrupt"+ " handled\n");
                             }
                             else {
@@ -125,7 +131,7 @@ public class Scheduler extends Thread{
                                     log("Process " + simP.PID + " is running\n");
                                 }
                             }
-                            continue;
+                            //continue;
 
                             //FORK - child process will be created for simulated process
                             //Single level parent child relationship - every process will include a FORK instruction
@@ -133,30 +139,27 @@ public class Scheduler extends Thread{
                             if(ioDevice.shouldInterrupt()){
                                 log(ioDevice.name + " INTERRUPT\n\n");
                                 simP.state =  ProcessState.WAIT;
-                                waitQueue.add(simP);
+                                //waitQueue.add(simP);
                                 log("Process " + simP.PID + " added to wait queue due to interrupt \n");
                                 int suspendProcess = ioDevice.cycle;
-                                Thread.sleep(suspendProcess);
-                                waitQueue.remove(simP);
+                                //Thread.sleep(suspendProcess);
+                                //waitQueue.remove(simP);
                                 log( ioDevice.name + " interrupt"+ " handled\n");
                             }
                             else {
                                 pcb childP = simP;
                                 childP.state = ProcessState.NEW;
                                 childProcesses.add(childP); //child processes are created and added to new queue
-                                if (simP.cycles[simP.programCounter] <= 0) {
-                                    simP.programCounter++;//onto next instruction
-                                }
                                 log("Child process " + childP.childPID + " created for Process " + simP.PID + " (FORK)\n");
                             }
-                            continue;
+                            //continue;
 
                             //CRIT_START - Tag denotes when a process is running during its critical section
                         case "CRIT_START":
                             log("Process " + simP.PID + " has entered its critical section\n");
                             cs.waitSem(cs.sem, simP, 1);
                             simP.programCounter++;
-                            continue;
+                            //continue;
 
                             //CRIT_END - Tag denotes when a process has completed its critical section
                         case "CRIT_END":
@@ -165,7 +168,9 @@ public class Scheduler extends Thread{
                             CSHandler.Semaphore.value--; //keeps track of permit so processes can execute their cs one at a time
                             Thread.sleep(500);
                             log("Process " + simP.PID + " has exited its critical section\n");
-                            continue;
+                            //break;
+
+                        default:
                     }
                 }
 
@@ -205,9 +210,10 @@ public class Scheduler extends Thread{
                 }
 
                 //once terminated processes equal the process total, simulation is completed
-                if (terminatedProcesses.size() == processTotal){
+                if (terminatedProcesses.size() == newQueue.size()){
                     simulating = false;
                 }
+
             }
         }
         //adding child processes to new queue, will be processed and terminated which are displayed to console
@@ -226,7 +232,7 @@ public class Scheduler extends Thread{
         System.out.print(sb);
     }
 
-    /*@Override
+    @Override
     public void run(){
         int threadNum = Integer.parseInt(Thread.currentThread().getName());
         for (int i = 0; i < simProcess.length; i++){
@@ -237,5 +243,5 @@ public class Scheduler extends Thread{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }*/
+    }
 }

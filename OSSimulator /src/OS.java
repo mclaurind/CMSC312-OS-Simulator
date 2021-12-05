@@ -38,21 +38,21 @@ public class OS {
         }
 
         System.out.print("\nROUND ROBIN SCHEDULER ACTIVITY LOG\n*********************************\n");
-        /*for (int i = 0; i < 4; i++){
+        for (int i = 0; i < threads.length; i++){
             threads[i] = new Scheduler();
             threads[i].setName(Integer.toString(i));
             threads[i].start();
             System.out.print("THREAD THREAD THREAD THREAD THREAD" + threads[i].getName() + "\n");
-        }*/
+        }
 
-        Scheduler rr = new Scheduler();
-        rr.roundRobinScheduler(newQueue,processTotal,remMemory);
+        //Scheduler rr = new Scheduler();
+        // rr.roundRobinScheduler(newQueue,processTotal,remMemory);
 
         //simulates cascading termination
-        System.out.print("\nDisplaying terminated child processes...\n\n");
+      /* System.out.print("\nDisplaying terminated child processes...\n\n");
         for (pcb p : Scheduler.childProcesses){
             System.out.print("CHILD PROCESS " + p.childPID + "\n PID: " + p.childPID + p.toString().replace("PID: ", "PPID: ") + "\n\n");
-        }
+        }*/
     }
 
     //reads program files and create a process
