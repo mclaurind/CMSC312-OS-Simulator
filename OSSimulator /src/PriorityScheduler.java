@@ -27,6 +27,7 @@ public class PriorityScheduler extends Thread {
         int remMemory = OS.remMemory;
         int processTotal = OS.processTotal;
         OrdinalPipe pipe = new OrdinalPipe();
+        ResourceBank bank = new ResourceBank();
 
         while (simulating) {
             clock.tiktok();
@@ -128,6 +129,27 @@ public class PriorityScheduler extends Thread {
                                                 log("Process " + simP.PID + " received message. (RECEIVED MESSAGE) \n");
                                             }
                                         }
+                                }
+
+                                //process may also request resources
+                                //Banker's algorithm will be used to avoid deadlock
+                                // at least one process should be able to acquire its maximum possible set of resources, and proceed to termination.
+                                boolean resourceRequest = new Random().nextBoolean();
+                                if (resourceRequest){
+                                    int maxNeed = new Random().nextInt((10 - 1 +1)+1) ;
+                                    int currNeed =new Random().nextInt((10 - 1 +1)+1);
+                                    int res = new Random().nextInt((3 - 0)+ 0) + 0;
+                                    log("Process " + simP.PID + " requests an amount of " + currNeed + " of " + bank.resources.get(res).toString() +" (RESOURCE REQUEST)\n");
+                                    if (bank.resources.get(res).amount >= maxNeed){
+                                        bank.resources.get(res).amount = bank.resources.get(res).amount - currNeed;
+                                        int usedResources = bank.resources.get(res).amount;
+                                        log("Process " + simP.PID + " resource request approved (RESOURCE REQUEST APPROVED)\n");
+                                    }
+                                    // unsafe state so resource request is denied
+                                    else{
+                                        log("Process " + simP.PID + " resource request denied (DEADLOCK AVOIDANCE)\n");
+                                    }
+                                    //
                                 }
                                 simP.cycles[simP.programCounter]--;
                                 if (simP.cycles[simP.programCounter] <= 0) {
@@ -301,7 +323,7 @@ public class PriorityScheduler extends Thread {
         }
     }
 
-    //2st inter-process method - requires a child parent relationship
+    //2nd inter-process method - requires a child parent relationship
     //processes may send messages during I/O or CALCULATE instructions
     public class OrdinalPipe{
         ArrayList <Message> messages;
