@@ -40,16 +40,20 @@ public class OS {
         //cpu1 - round robin scheduler with named pipe for inter-process communication
         //cpu2 - priority scheduler with ordinal pipe for inter-process communication
         System.out.println("Enter the number of the scheduling algorithm you'd like: \n");
-        System.out.println("        1) Round Robin            2) Priority");
+        System.out.println("1) Round Robin      2) Priority       3) Multilevel Queue\n" );
         int choice = in.nextInt();
 
         if (choice == 1){
             cpu cpu1 = new cpu("rr");
             cpu1.start();
         }
-        else {
+        else if (choice == 2 ){
             cpu cpu2 = new cpu("p");
             cpu2.start();
+        }
+        else{
+            MLQScheduler mlq = new MLQScheduler();
+            mlq.MLQScheduling();
         }
     }
 

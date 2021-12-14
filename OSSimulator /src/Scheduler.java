@@ -17,7 +17,7 @@ public class Scheduler extends Thread{
     ArrayList <pcb> tempReady;
 
     //Round Robin scheduling algorithm
-    public synchronized void roundRobinScheduler() throws InterruptedException {
+    public synchronized void roundRobinScheduler(ArrayDeque<pcb> processes, int t) throws InterruptedException {
         readyQueue = new ArrayDeque<>();
         waitQueue = new ArrayList<>();
         terminatedProcesses = new ArrayList<>();
@@ -26,7 +26,7 @@ public class Scheduler extends Thread{
         cs = new CSHandler();
         IODevice ioDevice = new IODevice();
         clock = new clock();
-        ArrayDeque<pcb> newQueue = OS.newQueue;
+        ArrayDeque<pcb> newQueue = processes;
         int remMemory = OS.remMemory;
         int processTotal = OS.processTotal;
         tempReady = new ArrayList<>();
@@ -75,10 +75,12 @@ public class Scheduler extends Thread{
                 i++;
             }
 
-            //assigning threads to 4 diff processes
-            int thread = Integer.parseInt(Thread.currentThread().getName());
-            for (int i = 0; i < simProcesses.length; i++){
-                simProcesses[thread] = tempReady.get(thread);
+            if (t == 1){
+                //assigning threads to 4 diff processes
+                int thread = Integer.parseInt(Thread.currentThread().getName());
+                for (int i = 0; i < simProcesses.length; i++){
+                    simProcesses[thread] = tempReady.get(thread);
+                }
             }
 
             //now adding processes to ready queue
@@ -320,7 +322,7 @@ public class Scheduler extends Thread{
     @Override
     public void run() {
         try {
-            roundRobinScheduler();
+            roundRobinScheduler(OS.newQueue,1);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

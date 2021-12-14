@@ -13,7 +13,7 @@ public class PriorityScheduler extends Thread {
     static clock clock;
     static pcb[] simProcesses = new pcb[4];
 
-    public synchronized void priorityScheduling() throws InterruptedException {
+    public synchronized void priorityScheduling(ArrayDeque<pcb> processes, int t) throws InterruptedException {
         readyQueue = new ArrayDeque<>();
         priorityProcesses = new ArrayList<>();
         waitQueue = new ArrayList<>();
@@ -23,7 +23,7 @@ public class PriorityScheduler extends Thread {
         cs = new CSHandler();
         IODevice ioDevice = new IODevice();
         clock = new clock();
-        ArrayDeque<pcb> newQueue = OS.newQueue;
+        ArrayDeque<pcb> newQueue = processes;
         int remMemory = OS.remMemory;
         int processTotal = OS.processTotal;
         OrdinalPipe pipe = new OrdinalPipe();
@@ -74,9 +74,12 @@ public class PriorityScheduler extends Thread {
             //sorting from greatest to least priority
             Collections.sort(priorityProcesses, new pcbComparator());
 
-            int thread = Integer.parseInt(Thread.currentThread().getName());
-            for (int i = 0; i < simProcesses.length; i++){
-                simProcesses[thread] = priorityProcesses.get(thread);
+            //1 means were in a cpu thread
+            if (t ==1) {
+                int thread = Integer.parseInt(Thread.currentThread().getName());
+                for (int i = 0; i < simProcesses.length; i++) {
+                    simProcesses[thread] = priorityProcesses.get(thread);
+                }
             }
 
             for (pcb p : priorityProcesses) {
@@ -93,7 +96,6 @@ public class PriorityScheduler extends Thread {
                     log("Process " + simP.PID + " with priority " + simP.priority + " is running\n");
                 }
             }
-
 
             // if there is one, evaluate its instructions, if there are even instructions left
             //I/O Interrupts may occur during any instruction and are handled accordingly
@@ -266,6 +268,11 @@ public class PriorityScheduler extends Thread {
                     remMemory = remMemory + simP.memorySize; //freeing main memory for other processes
                     log("Process " + simP.PID + " has terminated\n");
                     log("Freed " + simP.memorySize + " MB of main memory from Process " + simP.PID + "\n");
+                    log("Freed " + simP.memorySize + " all process resources " + simP.PID + "\n");
+                    for (pcb p : priorityProcesses){
+                        p.priority++;
+                    }
+                    log("Increased process priorities to avoid starvation. \n");
                     if (readyQueue.isEmpty()) {
                         simP = null;
                     } else {
@@ -317,7 +324,7 @@ public class PriorityScheduler extends Thread {
     @Override
     public void run() {
         try {
-            priorityScheduling();
+            priorityScheduling(OS.newQueue,1);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

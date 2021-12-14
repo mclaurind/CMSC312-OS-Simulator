@@ -6,12 +6,14 @@
 public class cpu extends Thread {
     Scheduler rr;
     PriorityScheduler p;
+    MLQScheduler mlqScheduler;
     String schedulerType;
 
     public cpu (String schedulerType){
         this.schedulerType = schedulerType;
         this.rr = new Scheduler();
         this.p = new PriorityScheduler();
+
     }
 
     @Override
