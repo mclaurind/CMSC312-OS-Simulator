@@ -1,9 +1,10 @@
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 //process control block (pcb) for a process
-public class pcb{
+public class pcb extends Thread{
     int PID;
     static int newPID = 1000;
     int memorySize;
@@ -12,6 +13,7 @@ public class pcb{
     int arrivalTime;
     int burstTime;
     int programCounter;
+    int priority; //used for priority scheduling algorithm
     String [] instructions;
     Integer[] cycles;
 
@@ -21,8 +23,10 @@ public class pcb{
         childPID = newPID++;
         state = ProcessState.NEW;
         burstTime = new Random().nextInt((10 - 0)+ 1) + 0;
+        priority = new Random().nextInt((10 - 0)+ 1) + 0;
         arrivalTime = 0;
         programCounter = 0;
+
 
         this.instructions = new String[instructions.size()];
         for(int i = 0; i < instructions.size(); i++){
@@ -41,9 +45,11 @@ public class pcb{
                 "\n Memory Size: " + memorySize + " MB" +
                 "\n Current State:" + state +
                 "\n Arrival Time: " + arrivalTime +
+                "\n Priority: " + priority +
                 "\n Burst Time: " +burstTime +
                 "\n Current Program Counter: " + programCounter +
                 "\n Instructions: " + Arrays.toString(instructions).replace("[","").replace("]","").replace(","," ") +
                 "\n Cycles: " + Arrays.toString(cycles).replace("[","").replace("]","").replace(","," ");
     }
+
 }

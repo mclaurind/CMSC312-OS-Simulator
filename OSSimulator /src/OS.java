@@ -37,22 +37,20 @@ public class OS {
             remMemory = mainMemorySize - process.memorySize; //tracking memory size
         }
 
-        System.out.print("\nROUND ROBIN SCHEDULER ACTIVITY LOG\n*********************************\n");
-        for (int i = 0; i < threads.length; i++){
-            threads[i] = new Scheduler();
-            threads[i].setName(Integer.toString(i));
-            threads[i].start();
-            System.out.print("THREAD THREAD THREAD THREAD THREAD" + threads[i].getName() + "\n");
+        //cpu1 - round robin scheduler with named pipe for inter-process communication
+        //cpu2 - priority scheduler with ordinal pipe for inter-process communication
+        System.out.println("Enter the number of the scheduling algorithm you'd like: \n");
+        System.out.println("        1) Round Robin            2) Priority");
+        int choice = in.nextInt();
+
+        if (choice == 1){
+            cpu cpu1 = new cpu("rr");
+            cpu1.start();
         }
-
-        //Scheduler rr = new Scheduler();
-        // rr.roundRobinScheduler(newQueue,processTotal,remMemory);
-
-        //simulates cascading termination
-      /* System.out.print("\nDisplaying terminated child processes...\n\n");
-        for (pcb p : Scheduler.childProcesses){
-            System.out.print("CHILD PROCESS " + p.childPID + "\n PID: " + p.childPID + p.toString().replace("PID: ", "PPID: ") + "\n\n");
-        }*/
+        else {
+            cpu cpu2 = new cpu("p");
+            cpu2.start();
+        }
     }
 
     //reads program files and create a process
