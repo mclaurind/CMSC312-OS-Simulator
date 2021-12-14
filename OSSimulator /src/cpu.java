@@ -6,7 +6,6 @@
 public class cpu extends Thread {
     Scheduler rr;
     PriorityScheduler p;
-    MLQScheduler mlqScheduler;
     String schedulerType;
 
     public cpu (String schedulerType){
@@ -28,14 +27,10 @@ public class cpu extends Thread {
                 threads[i].start();
                 System.out.print("CHILD PROCESS " + Scheduler.terminatedProcesses.get(i).childPID + "\n PID: " + Scheduler.terminatedProcesses.get(i).childPID + Scheduler.terminatedProcesses.get(i).toString().replace("PID: ", "PPID: ") + "\n\n");
             }
-            /*System.out.print("******************* TERMINATED CHILD PROCESSES (ROUND ROBIN) *******************\n");*/
-           /* for (int i= 0; i < Scheduler.childProcesses.size(); i++){
-                System.out.print("CHILD PROCESS " + Scheduler.childProcesses.get(i).childPID + "\n PID: " + Scheduler.childProcesses.get(i).childPID + Scheduler.childProcesses.get(i).toString().replace("PID: ", "PPID: ") + "\n\n");
-            }*/
         }
 
         else{
-            System.out.print("\nPRIORITY ACTIVITY LOG\n*********************************\n");
+            System.out.print("\nPRIORITY SCHEDULER ACTIVITY LOG\n*********************************\n");
             PriorityScheduler [] threads = new PriorityScheduler[4]; //4 threads
             for (int i = 0; i < 4; i++) {
                 threads[i] = new PriorityScheduler();
